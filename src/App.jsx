@@ -1,41 +1,16 @@
-import { useEffect, useState } from "react"
-
+import { useState } from 'react'
+import {useGetFacts} from './components/getFacts'
+import {useGetImg} from './components/getImage'
 const api1 = 'https://catfact.ninja/fact'
 //`https://cataas.com/cat/says/${word[0]}`
 
+
 function App() {
+  const [change,setChange]= useState(true)
   
-  const [text,setText] = useState()
-  const [image,setImg] = useState()
-  const [change,setChage] = useState(false)
+let text = useGetFacts({api1,change})
+let image = useGetImg({text})
 
-
-
-useEffect(()=>{
-  setImg('')
-  async function PeticionPal(){
-    const res = await fetch(api1)
-    const data = await res.json()
-    const {fact} = data
-    setText(fact) 
-    
-    
-  }
-
-  PeticionPal()
-
-
-},[change])
-
-useEffect(()=>{
-  if(!text) return
-  let word = text.split(' ').slice(0,3).join('')
-
-  fetch(`https://cataas.com/cat/says/${word}`)
-  .then(res => setImg(res.url))
-
-
-},[text])
 
 
 
@@ -45,7 +20,7 @@ useEffect(()=>{
     
   <main>
     {text && <div><h1>{text}</h1></div>}
-    {image && <><img src={image}/><button onClick={()=> setChage(!change)}>Change</button></>}
+    {image && <><img src={image}/><button onClick={()=> setChange(!change)} >Change</button></>}
   </main>
 
     
