@@ -1,64 +1,54 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from "react"
+
+const api1 = 'https://catfact.ninja/fact'
+//`https://cataas.com/cat/says/${word[0]}`
 
 function App() {
-  const [texto,setTexto]= useState(null)
-  const [img,setImg] = useState('')
-  const [showimg,setShow]= useState('')
-  const [next,setNext]= useState(true)
-  const [imageLoaded, setImageLoaded] = useState(false);
- 
- const api1 = 'https://catfact.ninja/fact'
+  
+  const [text,setText] = useState()
+  const [image,setImg] = useState()
+  const [change,setChage] = useState(false)
 
- useEffect(() => {
-  fetch(api1)
-    .then(res => res.json())
-    .then(data => palabraSplit(data.fact));
-}, [next]);
 
-useEffect(() => {
-  if (img) {
-    const image = new Image();
-    image.src = img;
-    image.onload = () => {
-      setShow(img);
-      setImageLoaded(true);
-    };
+
+useEffect(()=>{
+  setImg('')
+  async function PeticionPal(){
+    const res = await fetch(api1)
+    const data = await res.json()
+    const {fact} = data
+    setText(fact) 
+    
+    
   }
-}, [img,texto]);
+
+  PeticionPal()
 
 
+},[change])
+
+useEffect(()=>{
+  if(!text) return
+  let word = text.split(' ').slice(0,3).join('')
+
+  fetch(`https://cataas.com/cat/says/${word}`)
+  .then(res => setImg(res.url))
 
 
-let palabraSplit=(palabras)=>{
-  console.log(palabras)
-  setTexto(palabras)
-
-  let word = palabras.split(' ')
-  setImg(`https://cataas.com/cat/says/${word[0]}`)
-  
-}
+},[text])
 
 
-
-function nexts(){
-  setImageLoaded(false)
-  setNext(!next)
-  
-}
 
 
 
   return (
-    <>{
-      imageLoaded && <div>
-      <h1>{texto}</h1>
-      <div><img src={showimg} alt="Imagen Aqui" /></div>
-      <button onClick={nexts}>Change</button>
-      </div>
-      
-      
-    }
-    </>
+    
+  <main>
+    {text && <div><h1>{text}</h1></div>}
+    {image && <><img src={image}/><button onClick={()=> setChage(!change)}>Change</button></>}
+  </main>
+
+    
   )
 }
 
